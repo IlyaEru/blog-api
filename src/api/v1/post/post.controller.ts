@@ -54,7 +54,7 @@ const updatePost = async (req: Request, res: Response) => {
 
   if (!title || !body) {
     return res.status(400).json({ message: 'Title and body are required' });
-  } else if (await Post.isPostTitleTaken(title)) {
+  } else if (await Post.isPostTitleTaken(title, postId)) {
     return res.status(400).json({ message: 'Title is already taken' });
   } else if (title.trim().length < 3 || body.trim().length < 3) {
     return res

@@ -40,12 +40,16 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.static('isUsernameTaken', async function (username: string) {
-  const post = await this.findOne({
-    username: { $regex: new RegExp(username, 'i') },
-  });
-  return !!post;
-});
+userSchema.static(
+  'isUsernameTaken',
+  async function (username: string, id?: string) {
+    const post = await this.findOne({
+      username: { $regex: new RegExp(`^${username}$`, 'i') },
+      _id: { $ne: id },
+    });
+    return !!post;
+  },
+);
 
 userSchema.method('isPasswordMatch', async function (password: string) {
   return await bcrypt.compare(password, this.password);

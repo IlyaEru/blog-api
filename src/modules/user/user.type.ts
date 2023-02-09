@@ -10,5 +10,5 @@ export interface IUserDocument extends IUser, Document {
 }
 
 export interface IUserModel extends mongoose.Model<IUserDocument> {
-  isUsernameTaken(username: string): Promise<boolean>;
+  isUsernameTaken(username: string, id?: string): Promise<boolean>;
 }

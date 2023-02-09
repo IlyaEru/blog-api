@@ -48,12 +48,17 @@ postSchema.pre(['deleteOne', 'findOneAndDelete'], async function (next) {
   next();
 });
 
-postSchema.static('isPostTitleTaken', async function (title: string) {
-  const post = await this.findOne({
-    title: { $regex: new RegExp(title, 'i') },
-  });
-  return !!post;
-});
+postSchema.static(
+  'isPostTitleTaken',
+  async function (title: string, id?: string) {
+    const post = await this.findOne({
+      title: title.toLocaleLowerCase(),
+      _id: { $ne: id },
+    });
+
+    return !!post;
+  },
+);
 
 const Post = mongoose.model<IPostDocument, IPostModel>('Post', postSchema);
 

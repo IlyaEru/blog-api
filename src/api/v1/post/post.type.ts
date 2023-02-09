@@ -9,7 +9,7 @@ export interface IPost {
 }
 
 export interface IPostModel extends mongoose.Model<IPost> {
-  isPostTitleTaken(title: string): Promise<boolean>;
+  isPostTitleTaken(title: string, id?: string): Promise<boolean>;
 }
 
 export interface IPostDocument extends IPost, Document {}
