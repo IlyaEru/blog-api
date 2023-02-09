@@ -46,7 +46,12 @@ const login = async (req: Request, res: Response) => {
 };
 
 const logout = async (req: Request, res: Response) => {
+  console.log('logout');
+
   const { refreshToken } = req.body;
+  console.log({ refreshToken });
+  console.log(req.body);
+
   if (!refreshToken) {
     return res.status(400).json({ message: 'Refresh token required' });
   }

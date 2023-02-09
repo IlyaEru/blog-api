@@ -42,7 +42,7 @@ const createPost = async (req: Request, res: Response) => {
   }
   try {
     const post = await Post.create({ title, body });
-    res.status(201).json({ post });
+    res.status(201).json(post);
   } catch (error) {
     console.log(error);
   }
@@ -81,6 +81,42 @@ const updatePost = async (req: Request, res: Response) => {
   }
 };
 
+const publishPost = async (req: Request, res: Response) => {
+  const { id: postId } = req.params;
+  try {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { published: true },
+      { new: true },
+    );
+    if (post) {
+      res.status(200).json({ post });
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+const unpublishPost = async (req: Request, res: Response) => {
+  const { id: postId } = req.params;
+  try {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { published: false },
+      { new: true },
+    );
+    if (post) {
+      res.status(200).json({ post });
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 const deletePost = async (req: Request, res: Response) => {
   const { id: postId } = req.params;
   try {
@@ -95,4 +131,12 @@ const deletePost = async (req: Request, res: Response) => {
   }
 };
 
-export { getPosts, getPost, createPost, updatePost, deletePost };
+export {
+  getPosts,
+  getPost,
+  createPost,
+  updatePost,
+  deletePost,
+  publishPost,
+  unpublishPost,
+};

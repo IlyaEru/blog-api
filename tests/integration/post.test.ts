@@ -41,7 +41,7 @@ describe('Post Integration', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send(postData);
 
-      const postId = tokenResponse.body.post._id;
+      const postId = tokenResponse.body._id;
       const postResponse = await request(app).get(`/api/v1/posts/${postId}`);
       expect(postResponse.status).toBe(200);
     });
@@ -182,7 +182,7 @@ describe('Post Integration', () => {
         .send(postData);
 
       const tokenResponse = await request(app)
-        .put(`/api/v1/posts/${newPost.body.post._id}`)
+        .put(`/api/v1/posts/${newPost.body._id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
           title: faker.lorem.sentence(),
@@ -281,7 +281,7 @@ describe('Post Integration', () => {
         .send(postData);
 
       const tokenResponse = await request(app)
-        .delete(`/api/v1/posts/${newPost.body.post._id}`)
+        .delete(`/api/v1/posts/${newPost.body._id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
           title: faker.lorem.sentence(),
@@ -360,10 +360,75 @@ describe('Post Integration', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send(postData);
       const invalidTokenResponse = await request(app)
-        .delete(`/api/v1/posts/${newPost.body.post._id}`)
+        .delete(`/api/v1/posts/${newPost.body._id}`)
         .set('Authorization', `Bearer ${invalidJWT}`)
         .send(postData);
       expect(invalidTokenResponse.status).toBe(401);
+    });
+  });
+
+  describe('post Publish feature ', () => {
+    test('should publish the post', async () => {
+      const userData = {
+        username: faker.name.firstName(),
+        password: faker.internet.password(),
+      };
+      await request(app).post('/api/v1/auth/register').send(userData);
+      const loginResponse = await request(app)
+        .post('/api/v1/auth/login')
+        .send(userData);
+
+      const accessToken = loginResponse.body.tokens.access.token;
+
+      const newPost = await request(app)
+        .post('/api/v1/posts')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(postData);
+
+      expect(newPost.body.published).toBe(false);
+
+      const publishResponse = await request(app)
+        .put(`/api/v1/posts/${newPost.body._id}/publish`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(publishResponse.body.post.published).toBe(true);
+    });
+
+    test('should unpublish the token', async () => {
+      const userData = {
+        username: faker.name.firstName(),
+        password: faker.internet.password(),
+      };
+      await request(app).post('/api/v1/auth/register').send(userData);
+      const loginResponse = await request(app)
+        .post('/api/v1/auth/login')
+        .send(userData);
+
+      const accessToken = loginResponse.body.tokens.access.token;
+
+      const newPost = await request(app)
+        .post('/api/v1/posts')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(postData);
+
+      expect(newPost.body.published).toBe(false);
+
+      const publishResponse = await request(app)
+        .put(`/api/v1/posts/${newPost.body._id}/publish`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(publishResponse.body.post.published).toBe(true);
+
+      const unpublishResponse = await request(app)
+        .put(`/api/v1/posts/${newPost.body._id}/unpublish`)
+        .set('Authorization', `Bearer ${accessToken}`);
+
+      expect(unpublishResponse.body.post.published).toBe(false);
+    });
+
+    test('should return 401 without token', async () => {
+      const noTokenResponse = await request(app).put('/api/v1/posts/1/publish');
+      expect(noTokenResponse.status).toBe(401);
     });
   });
 });
