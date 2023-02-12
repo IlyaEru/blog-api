@@ -1,8 +1,11 @@
 # Blog API
 
+### [Blog CMS](https://github.com/IlyaEru/blog-cms)
+
 ## Description
 
 This is the backend for a blog application. It is a REST API that allows users to create, read, update and delete blog posts. It also allows users to create, read, update and delete comments on blog posts.
+
 
 ## Getting Started
 
