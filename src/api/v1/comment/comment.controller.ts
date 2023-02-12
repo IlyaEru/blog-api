@@ -1,11 +1,29 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Comment from './comment.model';
 
 const getComments = async (req: Request, res: Response) => {
+  const { postId } = req.query;
+  if (postId && typeof postId !== 'string') {
+    return res.status(400).json({ message: 'Invalid postId' });
+  }
+  if (postId && !mongoose.Types.ObjectId.isValid(postId)) {
+    return res.status(400).json({ message: 'Invalid postId' });
+  }
   try {
-    const comments = await Comment.find();
+    let comments;
+    if (postId) {
+      console.log({ postId });
+
+      comments = await Comment.find({ post: postId });
+    } else {
+      comments = await Comment.find();
+    }
+
     res.status(200).json({ comments });
   } catch (error) {
+    console.log(error);
+
     res.sendStatus(500);
   }
 };
@@ -25,7 +43,7 @@ const getComment = async (req: Request, res: Response) => {
 };
 
 const createComment = async (req: Request, res: Response) => {
-  const { body, name } = req.body;
+  const { body, name, postId } = req.body;
 
   if (!body) {
     return res.status(400).json({ message: 'Body is required' });
@@ -45,11 +63,15 @@ const createComment = async (req: Request, res: Response) => {
     return res
       .status(400)
       .json({ message: 'Name must be at least 3 characters long' });
+  } else if (!postId) {
+    return res.status(400).json({ message: 'PostId is required' });
   }
   try {
-    const comment = await Comment.create({ body, name });
+    const comment = await Comment.create({ post: postId, body, name });
     res.status(201).json({ comment });
   } catch (error) {
+    console.log({ error });
+
     res.sendStatus(500);
   }
 };
