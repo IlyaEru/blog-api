@@ -44,6 +44,7 @@ const getComment = async (req: Request, res: Response) => {
 
 const createComment = async (req: Request, res: Response) => {
   const { body, name, postId } = req.body;
+  console.log({ body, name, postId });
 
   if (!body) {
     return res.status(400).json({ message: 'Body is required' });
