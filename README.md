@@ -1,6 +1,8 @@
 # Blog API
 
 ### [Blog CMS](https://github.com/IlyaEru/blog-cms)
+### [Blog Client](https://github.com/IlyaEru/blog-client)
+
 
 ## Description
 
