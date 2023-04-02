@@ -8,7 +8,6 @@
 
 This is the backend for a blog application. It is a REST API that allows users to create, read, update and delete blog posts. It also allows users to create, read, update and delete comments on blog posts. 
 
-
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
